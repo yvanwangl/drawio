@@ -11,52 +11,19 @@ Draw.loadPlugin(function (ui) {
 		/**
 	 * Overrides SVG export to add metadata for each cell.
 	 */
-    var graphCreateSvgImageExport = Graph.prototype.createSvgImageExport;
+    var graph = ui.editor.graph;
+    var bg = graph.background;
 
-    Graph.prototype.createSvgImageExport = function () {
-      var exp = graphCreateSvgImageExport.apply(this, arguments);
+    if (bg == mxConstants.NONE) {
+      bg = null;
+    }
 
-      // // Overrides rendering to add metadata
-      var expDrawCellState = exp.drawCellState;
+    var svgRoot = graph.getSvg(bg, 1, 0, false, null, true, null, null, null);
 
-      exp.drawCellState = function (state, canvas) {
-        var svgDoc = canvas.root.ownerDocument;
-        var dlg = new EmbedDialog(ui, svgDoc.innerHTML,
-          null, null, null, 'Export Svg:');
-        ui.showDialog(dlg.container, 440, 240, true, true);
-        dlg.init();
-
-
-        var g = (svgDoc.createElementNS != null) ?
-          svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
-        g.setAttribute('id', 'cell-' + state.cell.id);
-
-        // Temporary replaces root for content rendering
-        var prev = canvas.root;
-        prev.appendChild(g);
-        canvas.root = g;
-
-        expDrawCellState.apply(this, arguments);
-
-        // Adds metadata if group is not empty
-        if (g.firstChild == null) {
-          g.parentNode.removeChild(g);
-        }
-        else if (mxUtils.isNode(state.cell.value)) {
-          g.setAttribute('content', mxUtils.getXml(state.cell.value));
-
-          for (var i = 0; i < state.cell.value.attributes.length; i++) {
-            var attrib = state.cell.value.attributes[i];
-            g.setAttribute('data-' + attrib.name, attrib.value);
-          }
-        }
-
-        // Restores previous root
-        canvas.root = prev;
-      };
-
-      return exp;
-    };
+    if (graph.shadowVisible) {
+      graph.addSvgShadow(svgRoot);
+    }
+    console.log(svgRoot);
   });
 
   var menu = ui.menus.get('extras');
