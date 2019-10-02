@@ -15,7 +15,6 @@ Draw.loadPlugin(function (ui) {
       var doInsert = mxUtils.bind(ui, function () {
         ui.resizeImage(img, data, mxUtils.bind(ui, function (data2, w2, h2) {
           var s = (resizeImages) ? Math.min(1, Math.min(ui.maxImageSize / w2, ui.maxImageSize / h2)) : 1;
-
           ui.importFile(svgContent, mime, x, y, Math.round(w2 * s), Math.round(h2 * s), filename, function (cells) {
             graph.setSelectionCells(cells);
             graph.scrollCellToVisible(graph.getSelectionCell());
@@ -43,14 +42,13 @@ Draw.loadPlugin(function (ui) {
     let page = ui.createPage();
     ui.pages.push(page);
     ui.selectPage(page, true);
-    const div = document.createElement('div');
-    div.innerHTML = svgData;
-    let file = new LocalFile(ui, div.innerHTML, 'canary.svg', true);
-    file.setData(ui.createSvgDataUri(file.getData()));
     var root = mxUtils.parseXml(svgData);
     var svgs = root.getElementsByTagName('svg');
     var svgRoot = svgs[0];
     var svgContent = svgRoot.getAttribute('content');
+    svgRoot.removeAttribute('content');
+    let file = new LocalFile(ui, svgRoot.outerHTML, 'canary.svg', true);
+    file.setData(ui.createSvgDataUri(file.getData()));
     doImportFile(file.getData(), svgContent, 'text/xml', 'canary.svg');
   }
 });
