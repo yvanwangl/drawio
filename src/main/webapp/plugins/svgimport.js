@@ -134,6 +134,7 @@ Draw.loadPlugin(function (ui) {
         catch (e) {
           // ignores any SVG parsing errors
         }
-      }
+      });
     }
-  });
+  }
+});
