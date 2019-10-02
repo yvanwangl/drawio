@@ -24,6 +24,8 @@ Draw.loadPlugin(function (ui) {
     }
 
     var svgRoot = graph.getSvg(bg, 1, 0, false, null, true, null, null, null);
+    svgRoot.setAttribute('content', ui.getFileData(true, null, null, null, true,
+      true, null, null, null, false));
 
     if (graph.shadowVisible) {
       graph.addSvgShadow(svgRoot);
