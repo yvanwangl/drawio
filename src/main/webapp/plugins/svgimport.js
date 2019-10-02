@@ -9,10 +9,32 @@ Draw.loadPlugin(function (ui) {
     var bds = graph.getGraphBounds();
     var x = graph.snap(Math.ceil(Math.max(0, bds.x / view.scale - view.translate.x) + 4 * graph.gridSize));
     var y = graph.snap(Math.ceil(Math.max(0, (bds.y + bds.height) / view.scale - view.translate.y) + 4 * graph.gridSize));
-    ui.importFile(data, mime, x, y, 100, 100, filename, function (cells) {
-      graph.setSelectionCells(cells);
-      graph.scrollCellToVisible(graph.getSelectionCell());
-    });
+    ui.loadImage(data, mxUtils.bind(this, function (img) {
+      var resizeImages = true;
+
+      var doInsert = mxUtils.bind(this, function () {
+        ui.resizeImage(img, data, mxUtils.bind(this, function (data2, w2, h2) {
+          var s = (resizeImages) ? Math.min(1, Math.min(ui.maxImageSize / w2, ui.maxImageSize / h2)) : 1;
+
+          ui.importFile(data, mime, x, y, Math.round(w2 * s), Math.round(h2 * s), filename, function (cells) {
+            graph.setSelectionCells(cells);
+            graph.scrollCellToVisible(graph.getSelectionCell());
+          });
+        }), resizeImages);
+      });
+
+      if (data.length > ui.resampleThreshold) {
+        ui.confirmImageResize(function (doResize) {
+          resizeImages = doResize;
+          doInsert();
+        });
+      }
+      else {
+        doInsert();
+      }
+    }), mxUtils.bind(this, function () {
+      ui.handleError({ message: mxResources.get('cannotOpenFile') });
+    }));
   });
 
   // Adds resource for action
