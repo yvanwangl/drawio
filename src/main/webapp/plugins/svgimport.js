@@ -45,8 +45,10 @@ Draw.loadPlugin(function (ui) {
     ui.selectPage(page, true);
     const div = document.createElement('div');
     div.innerHTML = svgData;
-    let file = new LocalFile(ui, div.innerHTML, 'canary.svg', true);
-    file.setData(ui.createSvgDataUri(file.getData()));
-    doImportFile(file.getData(), 'image/svg+xml', file.getTitle());
+    var svgRoot = this.editor.graph.getSvg();
+    svgRoot.appendChild(div.children);
+    // let file = new LocalFile(ui, div.innerHTML, 'canary.svg', true);
+    // file.setData(ui.createSvgDataUri(file.getData()));
+    // doImportFile(file.getData(), 'image/svg+xml', file.getTitle());
   };
 });
