@@ -9,7 +9,7 @@ Draw.loadPlugin(function (ui) {
     var bds = graph.getGraphBounds();
     var x = graph.snap(Math.ceil(Math.max(0, bds.x / view.scale - view.translate.x) + 4 * graph.gridSize));
     var y = graph.snap(Math.ceil(Math.max(0, (bds.y + bds.height) / view.scale - view.translate.y) + 4 * graph.gridSize));
-    ui.importFile(data, mime, x, y, 0, 0, filename, function (cells) {
+    ui.importFile(data, mime, x, y, 100, 100, filename, function (cells) {
       graph.setSelectionCells(cells);
       graph.scrollCellToVisible(graph.getSelectionCell());
     });
